@@ -28,4 +28,5 @@ Authors:
 5. Login data:
 
 login: admin
+
 password: admin
