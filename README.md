@@ -1,6 +1,6 @@
 Authors:
-Szymon Reguła
-Paweł Salamon
+/n Szymon Reguła
+/n Paweł Salamon
 
 ## How to run the project locally
 
