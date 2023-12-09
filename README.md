@@ -1,3 +1,7 @@
+Authors:
+Szymon Reguła
+Paweł Salamon
+
 ## How to run the project locally
 
 1. Navigate to the project directory:
