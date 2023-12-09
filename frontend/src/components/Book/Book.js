@@ -21,7 +21,7 @@ function Book({ id, title, author, genre, isbn }) {
 
   const deleteBookHandler = () => {
     deleteBook(id)
-      .then((response) => {
+      .then(() => {
         const updatedBooks = books.filter((book) => book._id !== id);
         setBooks(updatedBooks);
       })
