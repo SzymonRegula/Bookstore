@@ -15,14 +15,8 @@ Authors:
 2. Install dependencies:
 
    ```
-   npm install
-   npm install nodemon
-   ```
-
-3. If necessary, install concurrently:
-
-   ```
-   npm install concurrently
+   npm i concurrently
+   npm i
    ```
 
 4. Run the project:
@@ -34,4 +28,5 @@ Authors:
 5. Login data:
 
 login: admin
+
 password: admin
