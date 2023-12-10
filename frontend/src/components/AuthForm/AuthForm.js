@@ -3,64 +3,113 @@ import { useContext } from "react";
 import { AuthContext } from "../../store/auth-context";
 import classes from "./AuthForm.module.css";
 import Button from "../Button/Button";
+import { toast } from "react-toastify";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 
 function AuthForm() {
   const { authorized, setAuthorized } = useContext(AuthContext);
 
-  const submitHandler = (event) => {
-    event.preventDefault();
+  const notifyLogIn = () =>
+    toast.success("You are logged in!", {
+      position: "top-center",
+      autoClose: 2000,
+    });
+  const notifyError = () =>
+    toast.error("Wrong login or password!", {
+      position: "top-center",
+      autoClose: 2000,
+    });
+  const notifyLogOut = () =>
+    toast.info("You are logged out!", {
+      position: "top-center",
+      autoClose: 2000,
+    });
 
-    const loginData = {
-      login: event.target.login.value,
-      password: event.target.password.value,
-    };
+  const initialValues = {
+    login: "",
+    password: "",
+  };
 
-    authorize(loginData)
+  const validate = (values) => {
+    const errors = {};
+
+    if (!values.login) {
+      errors.login = "Required";
+    }
+
+    if (!values.password) {
+      errors.password = "Required";
+    }
+
+    return errors;
+  };
+
+  const submitHandler = (values) => {
+    authorize(values)
       .then((response) => {
         localStorage.setItem("token", response.data.token);
         setAuthorized(true);
+        notifyLogIn();
       })
       .catch((error) => {
         console.log(error);
+        notifyError();
       });
   };
 
   const logOutHandler = () => {
     setAuthorized(false);
     localStorage.removeItem("token");
+    notifyLogOut();
   };
 
   return (
-    <form className={classes.form} onSubmit={submitHandler}>
-      {!authorized && (
-        <>
-          <div className={classes.control}>
-            <input
-              className={classes.input}
-              type="login"
-              name="login"
-              placeholder="Login"
-              required
-            />
-            <input
-              className={classes.input}
-              type="password"
-              name="password"
-              placeholder="Password"
-              required
-            />
-          </div>
-          <Button variant="primary" type="submit">
-            Log in
-          </Button>
-        </>
+    <Formik
+      initialValues={initialValues}
+      validate={validate}
+      onSubmit={submitHandler}
+    >
+      {({ errors, touched }) => (
+        <Form className={classes.form}>
+          {!authorized && (
+            <>
+              <div className={classes.control}>
+                <Field
+                  className={`${classes.input} ${
+                    errors.login && touched.login ? classes.error : ""
+                  }`}
+                  type="text"
+                  name="login"
+                  placeholder={
+                    errors.login && touched.login ? errors.login : "Login"
+                  }
+                />
+                <Field
+                  className={`${classes.input} ${
+                    errors.password && touched.password ? classes.error : ""
+                  }`}
+                  type="password"
+                  name="password"
+                  placeholder={
+                    errors.password && touched.password
+                      ? errors.password
+                      : "Password"
+                  }
+                />
+              </div>
+              <Button variant="primary" type="submit">
+                Log in
+              </Button>
+            </>
+          )}
+          {authorized && (
+            <Button variant="warning" type="button" onClick={logOutHandler}>
+              Log out
+            </Button>
+          )}
+        </Form>
       )}
-      {authorized && (
-        <Button variant="warning" type="button" onClick={logOutHandler}>
-          Log out
-        </Button>
-      )}
-    </form>
+    </Formik>
   );
 }
 

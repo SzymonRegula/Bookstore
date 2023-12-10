@@ -6,11 +6,15 @@ import Button from "../Button/Button";
 import classes from "./Book.module.css";
 import Modal from "../Modal/Modal";
 import BookForm from "../BookForm/BookForm";
+import { toast } from "react-toastify";
 
 function Book({ id, title, author, genre, isbn }) {
   const { books, setBooks } = useContext(BooksContext);
   const { authorized } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const notifyDelete = () =>
+    toast.info("Book deleted!", { position: "top-center", autoClose: 2000 });
 
   const editBookHandler = () => {
     setModalOpen(true);
@@ -20,14 +24,17 @@ function Book({ id, title, author, genre, isbn }) {
   };
 
   const deleteBookHandler = () => {
-    deleteBook(id)
-      .then(() => {
-        const updatedBooks = books.filter((book) => book._id !== id);
-        setBooks(updatedBooks);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (window.confirm("Do you really want to delete book?")) {
+      deleteBook(id)
+        .then(() => {
+          const updatedBooks = books.filter((book) => book._id !== id);
+          setBooks(updatedBooks);
+          notifyDelete();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
